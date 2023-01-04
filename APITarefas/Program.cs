@@ -40,6 +40,18 @@ app.MapPost("tarefas", async (Tarefa tarefa, AppDbContext db) =>
     return Results.Created($"/tarefas/{tarefa.Id}", tarefa);
 });
 
+app.MapPut("tarefas/{id}", async (int id, Tarefa inputTarefa, AppDbContext db) =>
+{
+    var tarefa = await db.Tarefas.FindAsync(id);
+    if (tarefa is null) return Results.NotFound();
+
+    tarefa.Nome = inputTarefa.Nome;
+    tarefa.IsConcluida = inputTarefa.IsConcluida;
+
+    await db.SaveChangesAsync();
+    return Results.NoContent();
+});
+
 app.Run();
 
 class Tarefa
